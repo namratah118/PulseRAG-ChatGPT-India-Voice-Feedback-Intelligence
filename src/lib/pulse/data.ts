@@ -57,7 +57,7 @@ export function parseCSV(text: string): Review[] {
   row.push(cur);
   if (row.some((x) => x.trim())) rows.push(row);
   if (!rows.length) return [];
-  const header = rows[0].map((h) => h.trim().toLowerCase());
+  const header = (rows[0] ?? []).map((h) => h.trim().toLowerCase());
   return rows.slice(1).map((r) => {
     const o: Record<string, string> = {};
     CSV_COLUMNS.forEach((col) => {
