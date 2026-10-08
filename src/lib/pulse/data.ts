@@ -1,0 +1,69 @@
+export type Review = {
+  date: string;
+  source_type: string;
+  source: string;
+  source_url: string;
+  rating: string;
+  theme_hint: string;
+  review_text: string;
+  quote: string;
+};
+
+export const CSV_COLUMNS = ["date", "source_type", "source", "source_url", "rating", "theme_hint", "review_text", "quote"] as const;
+
+export const DEMO_CSV = `date,source_type,source,source_url,rating,theme_hint,review_text,quote
+2026-06-07,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/439729499,,Billing & subscriptions,"User reported a ChatGPT Plus charge through Google Play, then cancelled the subscription the same day and asked for a refund.","I canceled the sbscription on the same day after noticing the charge"
+2026-06-14,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/441728591,,Billing & subscriptions,"User said ChatGPT Go was cancelled before renewal, but a Google Play payment still went through and the paid access did not activate.","I canceled my ChatGPT Go subscription on May 31, but was still charged."
+2026-06-19,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/443160642,,Billing & subscriptions,"User reported two ChatGPT subscription purchases attached to different Google accounts and asked whether both charges were valid.","Both purchases were charged to the same bank account"
+2026-06-28,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/445758932,,Billing & subscriptions,"User described a mystery ChatGPT subscription charge on a family card and could not locate an active subscription in accessible Google accounts.","My mother's credit card has been charged A$33.99 for a Google ChatGPT subscription"
+2026-07-10,Reddit,r/googleplay,https://www.reddit.com/r/googleplay/comments/1uskm53/issue_regarding_payment_history/,,Billing & subscriptions,"User noticed Google Play withdrawing the ChatGPT Go renewal several days before the expected date and did not receive a matching Play notification.","Google had withdrawn money from my bank to pay for it, even though it was still not due yet"
+2026-07-12,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/450359415,,Billing & subscriptions,"User said they accidentally subscribed to ChatGPT Go, cancelled immediately, and requested a refund for the ₹1,499 charge.","They charged rs. 1499"
+2026-07-15,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/451118279,,Payment reliability,"User could not complete a ChatGPT Plus purchase on Google Play because payment returned error OR-REH-04.","My ChatGPT subscription failed. I received the error code OR-REH-04."
+2026-07-21,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/453404035,,Billing & subscriptions,"User accidentally purchased ChatGPT Go for ₹399 and asked for a refund after not using the subscription.","Please refund ₹399 and cancel it."
+2026-07-24,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/454112528,,Payment reliability,"User reported being unable to upgrade an existing ChatGPT subscription from Plus to Pro.","I can't upgrade my ChatGPT subscription from Plus to Pro"
+2026-07-14,Reddit,r/ChatGPTcomplaints,https://www.reddit.com/r/ChatGPTcomplaints/comments/1uw21zt/is_anyone_else_having_issues_with_the_new_chatgpt/,,Performance & reliability,"User said the new mobile app felt extremely slow, with older chats harder to find; another commenter reported voice-to-text problems requiring restarts.","everything feels extremely slow"
+2026-07-20,Reddit,r/ChatGPT,https://www.reddit.com/r/ChatGPT/comments/1v1p1ez/my_experience_with_the_latest_models/,,Model quality & instruction following,"Paid user compared newer models and said one model often ignored system prompts and required repeated review/fix cycles for coding work.","doesn't follow the system prompt or tool guidance very well"
+2026-08-12,Public forum archive,ChatGPT Disaster / archived public post,https://chatgptdisaster.com/accounts.html,,Billing & subscriptions,"Archived public account reports describe a payment succeeding at the bank while the OpenAI account was marked unpaid/void and downgraded.","My Plus payment went through successfully on my bank's end"
+2026-08-18,Reddit,r/ChatGPTPro,https://www.reddit.com/r/ChatGPTPro/comments/1vrsezq/fresh_chatgpt_chats_are_fast_established_ones_now/,,Performance & reliability,"User reported established and Project chats becoming dramatically slower and less reliable, with long waits, streaming failures, and retries.","Established ChatGPT conversations have suddenly become dramatically slower and much less reliable."
+2026-09-01,Reddit,r/OpenAI,https://www.reddit.com/r/OpenAI/comments/1w4ipus/csv_files_cannot_be_analyzed_01092026/,,Files & analysis,"User reported that CSV attachments uploaded successfully but could not be accessed for analysis, suggesting an attachment-to-sandbox issue.","attachments upload successfully and appear in the conversation, but the corresponding sandbox files are missing"
+2026-09-02,Reddit,r/ChatGPT,https://www.reddit.com/r/ChatGPT/comments/1w53lt1/openai_ads_manager_charged_me_100_after_i_just/,,Billing & subscriptions,"OpenAI Ads Manager user saw a roughly $100 deduction during setup and later learned it was described as a temporary authorization hold.","I noticed ₹9,903 (~$100) was deducted from my bank account by OpenAI."
+2026-09-02,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/464358098,,Payment reliability,"User trying to subscribe to ChatGPT Plus repeatedly received payment error OR-REH-04 on Google Play.","I'm trying to subscribe to ChatGPT Plus but keep getting the error code OR-REH-04"
+2026-09-03,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/464770886,,Payment reliability,"User said the official ChatGPT Android app showed “Purchases are unavailable” and the Google Play payment window never opened.","Purchases are unavailable."
+2026-09-11,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/466565469,,Billing & subscriptions,"User with an active Pro subscription said it was accidentally cancelled in Google Play and no resubscribe/renew option was available.","there is no “Resubscribe,” “Renew,” or similar option available"
+2026-09-17,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/468145188,,Billing & subscriptions,"User requested a refund for a ChatGPT Plus purchase because an expected video-generation capability was unavailable to them.","I purchased the subscription because I expected to use video generation"
+2026-09-17,Google Play Community,Google Play Community,https://support.google.com/googleplay/thread/468119857,,Payment reliability,"User reported repeated payment failures for ChatGPT Plus through Google Pay with OR-REH-04 and OR-HDT-16.","The issue occurs repeatedly, even though my payment method is active"
+`;
+
+export function parseCSV(text: string): Review[] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let cur = "";
+  let q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { cur += '"'; i++; } else q = false;
+      } else cur += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { row.push(cur); cur = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(cur); cur = "";
+      if (row.some((x) => x.trim())) rows.push(row);
+      row = [];
+    } else cur += c;
+  }
+  row.push(cur);
+  if (row.some((x) => x.trim())) rows.push(row);
+  if (!rows.length) return [];
+  const header = rows[0].map((h) => h.trim().toLowerCase());
+  return rows.slice(1).map((r) => {
+    const o: Record<string, string> = {};
+    CSV_COLUMNS.forEach((col) => {
+      const idx = header.indexOf(col);
+      o[col] = idx >= 0 ? (r[idx] ?? "").trim() : "";
+    });
+    return o as Review;
+  }).filter((r) => r.review_text || r.quote);
+}
